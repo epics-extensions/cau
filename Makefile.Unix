@@ -2,7 +2,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.6  1995/11/28 20:47:27  jba
+# Revision 1.7  1998/02/09 20:21:32  jba
+# moved nextFieldSubr.c from base
+#
+# Revision 1.6  1995/11/28  20:47:27  jba
 # Removed CMPLR=OLD statement.
 #
 # Revision 1.5  1995/02/13  15:25:46  jba
@@ -28,8 +31,13 @@ USR_LDLIBS = -lpprsyd -lca -lCom
 USR_INCLUDES = -I$(EPICS_EXTENSIONS_INCLUDE)
 USR_CFLAGS = -L$(EPICS_EXTENSIONS_LIB)
 
-SRCS.c= ../cau.c
+SRCS.c= ../cau.c ../nextFieldSubr.c
+OBJS= cau.o nextFieldSubr.o
 PROD = cau
 
 include $(EPICS)/config/RULES.Unix
+
+
+$(PROD): $(OBJS) $(DEPLIBS)
+	$(LINK.c) -o $@ $(OBJS) $(LDLIBS)
 
