@@ -1,0 +1,13 @@
+EPICS = ../../../..
+include Target.include
+include $(EPICS)/config/CONFIG_EXTENSIONS
+
+DEP_LIBS = $(EPICS_BASE_LIB)/$(T_A)/libca.a $(EPICS_BASE_LIB)/$(T_A)/libCom.a
+USR_LDLIBS = -lca -lCom
+
+CMPLR = OLD
+
+PROD = cau
+
+include $(EPICS)/config/RULES.Unix
+
