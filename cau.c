@@ -44,6 +44,10 @@
  *				put for array channels
  * .10	04-02-93	joh	silenced gcc
  * .11	08-11-93	mrk	removed V5_vxWorks
+ * $Log$
+ * Revision 1.2  1994/05/06 19:01:58  mrk
+ * Modifications for conversion from sccs to cvs
+ *
  *
  * make options
  *	-DvxWorks	makes a version for VxWorks
