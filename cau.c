@@ -68,6 +68,9 @@
 #   include <math.h>
 #   include <signal.h>
 #   include <setjmp.h>
+#ifndef _WIN32
+#   include <unistd.h>
+#endif
 #endif
 
 #define CAU_ABS(val) ((val) >= 0 ? (val) : -(val))

@@ -1,0 +1,9 @@
+Fri Aug  2 2002
+	Added ts library to Makefile.Host for builds with R3.14 base.
+	Created cau_2020802.tar.gz file.
+
+Tue Sep  3 11:31:24 CDT 2002
+	Added pprsyd code to remove dependancy on ar extension.
+	Warning message code cleanup.
+	Created cau_2020903.tar.gz file.
+

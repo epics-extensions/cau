@@ -13,15 +13,23 @@
 TOP = ../../..
 include $(TOP)/config/CONFIG_EXTENSIONS
 
+USR_CPPFLAGS_solaris += -D__EXTENSIONS__
 ifdef BASE_3_14
-USR_LIBS = pprsyd ts ca Com
+USR_LIBS = ts ca Com
 ts_DIR=$(INSTALL_LIB)
 else
-USR_LIBS = pprsyd ca Com
+USR_LIBS = ca Com
 endif
-pprsyd_DIR=$(EPICS_EXTENSIONS_LIB)
 
 PROD = cau
+
+cau_SRCS += cau.c
+cau_SRCS += nextFieldSubr.c
+cau_SRCS += cmdSubr.c
+cau_SRCS += genSubr.c
+cau_SRCS += helpSubr.c
+cau_SRCS += cvtNumbers.c
+
 
 include $(TOP)/config/RULES.Host
 
