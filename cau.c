@@ -45,7 +45,10 @@
  * .10	04-02-93	joh	silenced gcc
  * .11	08-11-93	mrk	removed V5_vxWorks
  * $Log$
- * Revision 1.2  1994/05/06 19:01:58  mrk
+ * Revision 1.3  1994/09/30 14:14:45  mrk
+ * Modified exception handler
+ *
+ * Revision 1.2  1994/05/06  19:01:58  mrk
  * Modifications for conversion from sccs to cvs
  *
  *
@@ -460,8 +463,16 @@ struct exception_handler_args arg;
 
     pCh = arg.chid;
     stat = arg.stat;
-    (void)printf("CA exception handler entered for %s\n", ca_name(pCh));
-    (void)printf("%s\n", ca_message(stat));
+    (void)printf("CA exception handler entered\n");
+    if(pCh){
+      (void)printf("CA channel name=%s\n", ca_name(pCh));
+    }
+    (void)printf("CA status=%s\n", ca_message(stat));
+    (void)printf("CA context=%s\n", arg.ctx);
+    (void)printf("CA op=%d data type=%s count=%d\n",
+                arg.op,
+                dbr_type_to_text(arg.type),
+                arg.count);
 }
 /*+/subr**********************************************************************
 * NAME	cauTask - main processing task for cau
