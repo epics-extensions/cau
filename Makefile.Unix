@@ -2,7 +2,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1994/09/21 22:18:44  jba
+# Revision 1.4  1994/10/25 15:51:06  winans
+# Changed the SRCS macro to SRCS.c and SRCS.cc
+#
+# Revision 1.3  1994/09/21  22:18:44  jba
 # New definitions in CONFIG* files
 #
 # Revision 1.2  1994/09/15  21:36:07  jba
@@ -19,7 +22,7 @@ USR_LDLIBS = -lca -lCom
 
 CMPLR = OLD
 
-SRCS= ../cau.c
+SRCS.c= ../cau.c
 PROD = cau
 
 include $(EPICS)/config/RULES.Unix
