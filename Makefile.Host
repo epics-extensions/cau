@@ -1,0 +1,14 @@
+#
+# $Id$
+#
+
+TOP = ../../..
+include $(TOP)/config/CONFIG_EXTENSIONS
+
+USR_LIBS = pprsyd ca Com
+pprsyd_DIR=$(INSTALL_LIB)
+
+PROD = cau
+
+include $(TOP)/config/RULES.Host
+
