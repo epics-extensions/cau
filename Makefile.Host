@@ -5,8 +5,13 @@
 TOP = ../../..
 include $(TOP)/config/CONFIG_EXTENSIONS
 
+ifdef BASE_3_14
+USR_LIBS = pprsyd ts ca Com
+ts_DIR=$(INSTALL_LIB)
+else
 USR_LIBS = pprsyd ca Com
-pprsyd_DIR=$(INSTALL_LIB)
+endif
+pprsyd_DIR=$(EPICS_EXTENSIONS_LIB)
 
 PROD = cau
 
