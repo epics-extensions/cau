@@ -1,5 +1,5 @@
 ADD_ON = ../..
-include $(ADD_ON)/src/admin/CONFIG
+include $(ADD_ON)/src/config/CONFIG
 
 GCC = $(oldCC)
 CC = $(oldCC)
@@ -11,7 +11,7 @@ OBJS = cau.o
 
 PROD = cau
 
-include $(ADD_ON)/src/admin/RULES
+include $(ADD_ON)/src/config/RULES
 
 cau : $(OBJS) $(DEP_LIBS)
 	$(CC) -o $@ $(OBJS) $(LDFLAGS)
