@@ -1,68 +1,16 @@
+/*************************************************************************\
+* Copyright (c) 2002 The University of Chicago, as Operator of Argonne
+* National Laboratory.
+* Copyright (c) 2002 The Regents of the University of California, as
+* Operator of Los Alamos National Laboratory.
+* This file is distributed subject to a Software License Agreement found
+* in the file LICENSE that is included with this distribution. 
+\*************************************************************************/
 /*	@(#)cau.c	1.13 8/11/93
  *	Author:	Roger A. Cole
  *	Date:	10-11-90
  *
  *	Experimental Physics and Industrial Control System (EPICS)
- *
- *	Copyright 1991-92, the Regents of the University of California,
- *	and the University of Chicago Board of Governors.
- *
- *	This software was produced under  U.S. Government contracts:
- *	(W-7405-ENG-36) at the Los Alamos National Laboratory,
- *	and (W-31-109-ENG-38) at Argonne National Laboratory.
- *
- *	Initial development by:
- *		The Controls and Automation Group (AT-8)
- *		Ground Test Accelerator
- *		Accelerator Technology Division
- *		Los Alamos National Laboratory
- *
- *	Co-developed with
- *		The Controls and Computing Group
- *		Accelerator Systems Division
- *		Advanced Photon Source
- *		Argonne National Laboratory
- *
- * Modification Log:
- * -----------------
- * .01	10-11-90	rac	initial version
- * .03	06-25-91	rac	installed in SCCS
- * .04  06-25-91	rac	allow "string" with put command; fix bug
- *				where "debug" persists under VxWorks
- * .05	06-28-91	rac	keep gcc from complaining
- * .06	08-20-91	rac	print state strings with "; fix channel
- *				name printing with get under debug; remove
- *				getPtrToValue and use dbr_value_ptr
- * .07	09-11-91	joh	updated for v5 vxWorks
- * .08	12-05-91	rac	change to use new cmdRead; don't use LWP;
- *				change display from `info' command; allow
- *				specifying count for array channels; send
- *				`info' output to dataOut; add the ADEL
- *				and MDEL options to the monitor command;
- *				replace CauCaDebug with subroutines
- * .09	02-19-92	rac	use cvt{Dbl,Lng}ToTxt from libCom; allow
- *				put for array channels
- * .10	04-02-93	joh	silenced gcc
- * .11	08-11-93	mrk	removed V5_vxWorks
- * $Log$
- * Revision 1.7  2000/10/24 20:48:00  jba
- * Added include for tsDefs.h.
- *
- * Revision 1.6  1999/03/19 15:52:46  jba
- * Changes to eliminate warning messages on Linux build.
- *
- * Revision 1.5  1995/11/28  20:48:00  jba
- * Portability changes.
- *
- * Revision 1.4  1995/03/30  23:43:38  jba
- * Changed cast from (long *) to (int *) in fprintf stmnt
- *
- * Revision 1.3  1994/09/30  14:14:45  mrk
- * Modified exception handler
- *
- * Revision 1.2  1994/05/06  19:01:58  mrk
- * Modifications for conversion from sccs to cvs
- *
  *
  * make options
  *	-DvxWorks	makes a version for VxWorks
