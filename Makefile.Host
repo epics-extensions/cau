@@ -8,6 +8,11 @@ include $(TOP)/config/CONFIG_EXTENSIONS
 USR_LIBS = pprsyd ca Com
 pprsyd_DIR=$(INSTALL_LIB)
 
+ifdef BASE_3_14
+PROD_LIBS += ts
+ts_DIR = $(EPICS_EXTENSIONS_LIB)
+endif
+
 PROD = cau
 
 include $(TOP)/config/RULES.Host
