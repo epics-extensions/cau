@@ -470,7 +470,7 @@ CX_CMD	**ppCxCmd;
     CauUnlock;
 #endif
 
-    genSigInit();
+    genSigInit(cauTaskSigHandler);
     if ((sigNum = setjmp(pglCauDesc->cauTaskInfo.sigEnv)) != 0) {
 	printf("cau: signal detected: %d\n", sigNum);
 	goto cauTaskWrapup;
