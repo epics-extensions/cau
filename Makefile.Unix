@@ -1,8 +1,17 @@
+#
+# $Id$
+#
+# $Log$
+# Revision 1.2  1994/09/15 21:36:07  jba
+# Mods for new CONFIG definitions
+#
+#
+
 EPICS = ../../../..
 include Target.include
 include $(EPICS)/config/CONFIG_EXTENSIONS
 
-DEP_LIBS = $(EPICS_BASE_LIB)/$(T_A)/libca.a $(EPICS_BASE_LIB)/$(T_A)/libCom.a
+DEPLIBS = $(EPICS_BASE_LIB)/libca.a $(EPICS_BASE_LIB)/libCom.a
 USR_LDLIBS = -lca -lCom
 
 CMPLR = OLD
