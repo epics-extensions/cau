@@ -2,6 +2,10 @@
 # $Id$
 #
 # $Log$
+# Revision 1.8  1998/02/09 21:28:42  jba
+# moved nextFieldSubr.c to ar
+# CV: ----------------------------------------------------------------------
+#
 # Revision 1.7  1998/02/09 20:21:32  jba
 # moved nextFieldSubr.c from base
 #
@@ -31,13 +35,8 @@ USR_LDLIBS = -lpprsyd -lca -lCom
 USR_INCLUDES = -I$(EPICS_EXTENSIONS_INCLUDE)
 USR_CFLAGS = -L$(EPICS_EXTENSIONS_LIB)
 
-SRCS.c= ../cau.c ../nextFieldSubr.c
-OBJS= cau.o nextFieldSubr.o
+SRCS.c= ../cau.c
 PROD = cau
 
 include $(EPICS)/config/RULES.Unix
-
-
-$(PROD): $(OBJS) $(DEPLIBS)
-	$(LINK.c) -o $@ $(OBJS) $(LDLIBS)
 
