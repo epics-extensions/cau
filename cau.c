@@ -45,7 +45,10 @@
  * .10	04-02-93	joh	silenced gcc
  * .11	08-11-93	mrk	removed V5_vxWorks
  * $Log$
- * Revision 1.4  1995/03/30 23:43:38  jba
+ * Revision 1.5  1995/11/28 20:48:00  jba
+ * Portability changes.
+ *
+ * Revision 1.4  1995/03/30  23:43:38  jba
  * Changed cast from (long *) to (int *) in fprintf stmnt
  *
  * Revision 1.3  1994/09/30  14:14:45  mrk
@@ -134,7 +137,7 @@ typedef struct cauSetChannel {
     chtype	dbfType;		/* native type of channel */
     chtype	dbrType;		/* desired type for retrieved data */
     chid	pCh;			/* channel pointer */
-    chid	pEv;			/* event pointer */
+    evid	pEv;			/* event pointer */
     union db_access_val *pBuf;		/* pointer to buffer */
     union db_access_val *pGRBuf;	/* pointer to graphics info buffer */
     long	(*pFn)();		/* function to call */
@@ -982,7 +985,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 	while (pChan != NULL) {
 	    pChan->dbrType = dbf_type_to_DBR_TIME(pChan->dbfType);
 	    if (count > 0) {
-		if (count <= pChan->elCount)
+		if (count <= (int)pChan->elCount)
 		    pChan->reqCount = count;
 		else
 		    pChan->reqCount = pChan->elCount;
@@ -1001,7 +1004,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 	if (pChan != NULL) {
 	    pChan->dbrType = dbf_type_to_DBR_TIME(pChan->dbfType);
 	    if (count > 0) {
-		if (count <= pChan->elCount)
+		if (count <= (int)pChan->elCount)
 		    pChan->reqCount = count;
 		else
 		    pChan->reqCount = pChan->elCount;
@@ -1270,7 +1273,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 	while (pChan != NULL) {
 	    pChan->dbrType = dbf_type_to_DBR_TIME(pChan->dbfType);
 	    if (count > 0) {
-		if (count <= pChan->elCount)
+		if (count <= (int)pChan->elCount)
 		    pChan->reqCount = count;
 		else
 		    pChan->reqCount = pChan->elCount;
@@ -1328,7 +1331,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 		pChan->lastMonErr = 0;
 		pChan->dbrType = dbf_type_to_DBR_TIME(pChan->dbfType);
 		if (count > 0) {
-		    if (count <= pChan->elCount)
+		    if (count <= (int)pChan->elCount)
 			pChan->reqCount = count;
 		    else
 			pChan->reqCount = pChan->elCount;
@@ -2093,7 +2096,7 @@ int	prEGU;		/* I 1 if EGU is to be printed */
     }
     pVal = dbr_value_ptr(pChan->pBuf, pChan->dbrType);
     if (pVal == NULL)
-	(void)fprintf("invalid buffer type: %d", pChan->dbrType);
+	(void)fprintf(pCxCmd->dataOut,"invalid buffer type: %d", pChan->dbrType);
     else if (dbr_type_is_STRING(pChan->dbrType))
 	(void)fprintf(pCxCmd->dataOut, " %12s", (char *)pVal);
     else if (dbr_type_is_SHORT(pChan->dbrType))
