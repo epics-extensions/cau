@@ -45,7 +45,10 @@
  * .10	04-02-93	joh	silenced gcc
  * .11	08-11-93	mrk	removed V5_vxWorks
  * $Log$
- * Revision 1.3  1994/09/30 14:14:45  mrk
+ * Revision 1.4  1995/03/30 23:43:38  jba
+ * Changed cast from (long *) to (int *) in fprintf stmnt
+ *
+ * Revision 1.3  1994/09/30  14:14:45  mrk
  * Modified exception handler
  *
  * Revision 1.2  1994/05/06  19:01:58  mrk
@@ -238,6 +241,7 @@ static void cauCmdProcess();
 static long cauTask(), cauTaskCheck();
 static void cauTaskSigHandler();
 static char *cauInTask();
+static int cau_deadband();
 static int cau_debug();
 static int cau_delete();
 static int cau_get();
@@ -2095,7 +2099,7 @@ int	prEGU;		/* I 1 if EGU is to be printed */
     else if (dbr_type_is_SHORT(pChan->dbrType))
 	(void)fprintf(pCxCmd->dataOut, " %12d", *(short *)pVal);
     else if (dbr_type_is_LONG(pChan->dbrType))
-	(void)fprintf(pCxCmd->dataOut, " %12d", *(long *)pVal);
+	(void)fprintf(pCxCmd->dataOut, " %12d", *(int *)pVal);
     else if (dbr_type_is_CHAR(pChan->dbrType))
 	(void)fprintf(pCxCmd->dataOut, " %12d", *(unsigned char *)pVal);
     else if (dbr_type_is_ENUM(pChan->dbrType)) {
