@@ -45,6 +45,9 @@
  * .10	04-02-93	joh	silenced gcc
  * .11	08-11-93	mrk	removed V5_vxWorks
  * $Log$
+ * Revision 1.7  2000/10/24 20:48:00  jba
+ * Added include for tsDefs.h.
+ *
  * Revision 1.6  1999/03/19 15:52:46  jba
  * Changes to eliminate warning messages on Linux build.
  *
@@ -94,6 +97,7 @@
 #include "db_access.h"
 #include "nextFieldSubrDefs.h"
 #include "cvtNumbersDefs.h"
+#include "tsDefs.h"
 
 #ifdef vxWorks
 /*----------------------------------------------------------------------------
