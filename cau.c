@@ -45,7 +45,10 @@
  * .10	04-02-93	joh	silenced gcc
  * .11	08-11-93	mrk	removed V5_vxWorks
  * $Log$
- * Revision 1.5  1995/11/28 20:48:00  jba
+ * Revision 1.6  1999/03/19 15:52:46  jba
+ * Changes to eliminate warning messages on Linux build.
+ *
+ * Revision 1.5  1995/11/28  20:48:00  jba
  * Portability changes.
  *
  * Revision 1.4  1995/03/30  23:43:38  jba
@@ -83,14 +86,14 @@
 *
 *-***************************************************************************/
 
-#include <genDefs.h>
-#include <cmdDefs.h>
-#ifndef INCLcadefh
-#   include <cadef.h>
-#endif
-#ifndef INCLdb_accessh
-#   include <db_access.h>
-#endif
+#include <string.h>
+#include <stdlib.h>
+#include "genDefs.h"
+#include "cmdDefs.h"
+#include "cadef.h"
+#include "db_access.h"
+#include "nextFieldSubrDefs.h"
+#include "cvtNumbersDefs.h"
 
 #ifdef vxWorks
 /*----------------------------------------------------------------------------
@@ -241,29 +244,32 @@ typedef struct cauDesc {
 int cau();
 static void cauCaException();
 static void cauCmdProcess();
-static long cauTask(), cauTaskCheck();
+static long cauTask();
+#ifdef vxWorks
+static long cauTaskCheck();
+static long cauInit();
+#endif
 static void cauTaskSigHandler();
 static char *cauInTask();
-static int cau_deadband();
-static int cau_debug();
-static int cau_delete();
-static int cau_get();
-static int cau_info();
+static void cau_deadband();
+static void cau_debug();
+static void cau_delete();
+static void cau_get();
+static void cau_info();
 static void cau_interval(), cau_interval_deadTime_test();
-static int cau_monitor();
-static int cau_put();
-static int cau_ramp();
+static void cau_monitor();
+static void cau_put();
+static void cau_ramp();
 
 static CAU_CHAN * cauChanAdd();
 static long cauChanDel();
 static CAU_CHAN *cauChanFind();
 static long cauFree();
-static int cauGetAndPrint();
-static long cauInit();
+static void cauGetAndPrint();
 static void cauInitAtStartup();
 static void cauMonitor();
 static void cauPrintBuf();
-static int cauPrintBufArray();
+static void cauPrintBufArray();
 static void cauPrintInfo();
 static void cauSigGen();
 static long cauSigGenGetParams();
@@ -345,7 +351,7 @@ int	invokeVal;
 }
 
 #ifndef vxWorks
-    main()
+    int main()
     {
 	return cau();
     }
@@ -380,7 +386,6 @@ int	invokeVal;
 int
 cau()
 {
-    long	stat;		/* status return from calls */
 
     if (pglCauCxCmd == NULL ||
 		(pglCauDesc->cauTaskInfo.stop == 1 &&
@@ -476,7 +481,7 @@ struct exception_handler_args arg;
     }
     (void)printf("CA status=%s\n", ca_message(stat));
     (void)printf("CA context=%s\n", arg.ctx);
-    (void)printf("CA op=%d data type=%s count=%d\n",
+    (void)printf("CA op=%ld data type=%s count=%ld\n",
                 arg.op,
                 dbr_type_to_text(arg.type),
                 arg.count);
@@ -879,7 +884,7 @@ cmdDone:
 /*+/subr**********************************************************************
 * NAME	cau_deadband
 *-*/
-static
+static void
 cau_deadband(pCxCmd)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
 {
@@ -900,7 +905,7 @@ CX_CMD	*pCxCmd;	/* IO pointer to command context */
 /*+/subr**********************************************************************
 * NAME	cau_debug
 *-*/
-static
+static void
 cau_debug(pCxCmd)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
 {
@@ -917,7 +922,7 @@ CX_CMD	*pCxCmd;	/* IO pointer to command context */
 /*+/subr**********************************************************************
 * NAME	cau_delete
 *-*/
-static
+static void
 cau_delete(pCxCmd, pCauDesc)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
 CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
@@ -959,12 +964,11 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 /*+/subr**********************************************************************
 * NAME	cau_get
 *-*/
-static
+static void
 cau_get(pCxCmd, pCauDesc)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
 CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 {
-    long	stat;
     CAU_CHAN	*pChan;		/* temp for channel pointer */
     int		count=-1;
 
@@ -1019,7 +1023,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 /*+/subr**********************************************************************
 * NAME	cau_info
 *-*/
-static
+static void
 cau_info(pCxCmd, pCauDesc)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
 CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
@@ -1234,7 +1238,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 /*+/subr**********************************************************************
 * NAME	cau_monitor
 *-*/
-static
+static void
 cau_monitor(pCxCmd, pCauDesc)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
 CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
@@ -1356,7 +1360,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 * NAME	cau_put
 *	put chanName value
 *-*/
-static
+static void
 cau_put(pCxCmd, pCauDesc)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
 CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
@@ -1365,7 +1369,6 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
     CAU_CHAN	*pChan;		/* temp for channel pointer */
     char	*pValue;	/* temp for value pointer */
     int		i;
-    char	stateNumText[4];
 
     if ((pCxCmd->fldLen = nextChanNameField(&pCxCmd->pLine, &pCxCmd->pField,
 							&pCxCmd->delim)) <= 1)
@@ -1430,7 +1433,7 @@ putError:
 * NAME	cau_ramp
 *	ramp[,[secPerStep],[nSteps],[begVal],[endVal]] chanName [chanName ...]
 *-*/
-static
+static void
 cau_ramp(pCxCmd, pCauDesc)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
 CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
@@ -1745,7 +1748,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 *	void
 *
 *-*/
-static
+static void
 cauGetAndPrint(pCxCmd,
 		pCauDesc, pChan, printTime, printDBRType, printENUMAsShort)
 CX_CMD	*pCxCmd;	/* IO pointer to command context */
@@ -1993,7 +1996,7 @@ struct event_handler_args arg;
     CAU_CHAN	*pCauChan;	/* pointer to channel descriptor */
     int		nBytes;		/* total size of `value' buffer */
     double	interval;	/* difference between present and prev stamp */
-    TS_STAMP	priorStampText[28];/* time stamp of prior value */
+    char 	priorStampText[28];/* time stamp of prior value */
     double	diff;		/* diff between actual and desired intervals */
     int		printFlag=1;
     CX_CMD	*pCxCmd;	/* pointer to command context */
@@ -2096,7 +2099,7 @@ int	prEGU;		/* I 1 if EGU is to be printed */
     }
     pVal = dbr_value_ptr(pChan->pBuf, pChan->dbrType);
     if (pVal == NULL)
-	(void)fprintf(pCxCmd->dataOut,"invalid buffer type: %d", pChan->dbrType);
+	(void)fprintf(pCxCmd->dataOut,"invalid buffer type: %ld", pChan->dbrType);
     else if (dbr_type_is_STRING(pChan->dbrType))
 	(void)fprintf(pCxCmd->dataOut, " %12s", (char *)pVal);
     else if (dbr_type_is_SHORT(pChan->dbrType))
@@ -2139,13 +2142,12 @@ int	prEGU;		/* I 1 if EGU is to be printed */
 *	void
 *
 *-*/
-static cauPrintBufArray(out, pChan)
+static  void cauPrintBufArray(out, pChan)
 FILE	*out;
 CAU_CHAN *pChan;
 {
     int		nEl, nBytes, i, prec;
     char	*pSrc;
-    double	value;
     char	text[7];
     chtype	dbrType=pChan->dbrType;
 
@@ -2206,7 +2208,7 @@ CAU_CHAN *pChan;	/* I pointer to channel descriptor */
 	(void)fprintf(pCxCmd->dataOut,
 			" %16s", dbf_type_to_text(pChan->dbfType));
     else
-	(void)fprintf(pCxCmd->dataOut, "dbfType=%8d", pChan->dbfType);
+	(void)fprintf(pCxCmd->dataOut, "dbfType=%8ld", pChan->dbfType);
     (void)fprintf(pCxCmd->dataOut, " elCount=%5d", pChan->elCount);
 
     if (pChan->pBuf->tstrval.status == -2)
