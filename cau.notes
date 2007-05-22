@@ -5,5 +5,13 @@ Fri Aug  2 2002
 Tue Sep  3 11:31:24 CDT 2002
 	Added pprsyd code to remove dependancy on ar extension.
 	Warning message code cleanup.
-	Created cau_2020903.tar.gz file.
+	Created cau_20020903.tar.gz file.
 
+Wed Jun 30 17:27:34 CDT 2004
+	Signal handler fix reported by Jeremy Weatherford, SBC-CAT.
+
+Tue Jul  6 16:22:11 CDT 2004
+	Created cau_20040706.tar.gz file.
+	
+Tue May 22 11:15:59 CDT 2007
+	Converted to R3.14. Makefiles.

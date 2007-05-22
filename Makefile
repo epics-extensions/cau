@@ -10,5 +10,19 @@
 # $Id$
 #
 TOP = ../..
-include $(TOP)/config/CONFIG_EXTENSIONS
-include $(TOP)/config/RULES_ARCHS
+include $(TOP)/configure/CONFIG
+
+USR_LIBS = ts ca Com
+ts_DIR=$(INSTALL_LIB)
+
+PROD_HOST = cau
+
+cau_SRCS += cau.c
+cau_SRCS += nextFieldSubr.c
+cau_SRCS += cmdSubr.c
+cau_SRCS += genSubr.c
+cau_SRCS += helpSubr.c
+cau_SRCS += cvtNumbers.c
+
+include $(TOP)/configure/RULES
+
