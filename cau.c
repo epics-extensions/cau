@@ -46,6 +46,7 @@
 #include "nextFieldSubrDefs.h"
 #include "cvtNumbersDefs.h"
 #include "tsDefs.h"
+#include "epicsTime.h"
 
 #ifdef vxWorks
 /*----------------------------------------------------------------------------
@@ -253,7 +254,7 @@ static char	*glCauADEL_msg="prior to ca_add_masked_array_event (ADEL)";
 /*+/subr**********************************************************************
 * NAME	cauCaDebug...
 *-*/
-static TS_STAMP cauDbStamp;
+epicsTimeStamp cauDbStamp;
 static char cauDbStampTxt[28];
 
 static void cauCaDebug(message, invokeVal)
@@ -262,8 +263,8 @@ int	invokeVal;
 {
     if (glCauDebug <= invokeVal)
 	return;
-    (void)tsLocalTime(&cauDbStamp);
-    (void)tsStampToText(&cauDbStamp, TS_TEXT_MMDDYY, cauDbStampTxt);
+    (void)epicsTimeGetCurrent(&cauDbStamp);
+    (void)epicsTimeToStrftime(cauDbStampTxt,28,"%m-%d-%y %H:%M:%S.%09f",&cauDbStamp);
     (void)printf("%s %s\n", &cauDbStampTxt[12], message);
 }
 
@@ -275,8 +276,8 @@ int	invokeVal;
 {
     if (glCauDebug <= invokeVal)
 	return;
-    (void)tsLocalTime(&cauDbStamp);
-    (void)tsStampToText(&cauDbStamp, TS_TEXT_MMDDYY, cauDbStampTxt);
+    (void)epicsTimeGetCurrent(&cauDbStamp);
+    (void)epicsTimeToStrftime(cauDbStampTxt,28,"%m-%d-%y %H:%M:%S.%09f",&cauDbStamp);
     (void)printf("%s %s (%s) for %s\n",
 		&cauDbStampTxt[12], message, dbr_type_to_text(type), name);
 }
@@ -288,8 +289,8 @@ int	invokeVal;
 {
     if (glCauDebug <= invokeVal)
 	return;
-    (void)tsLocalTime(&cauDbStamp);
-    (void)tsStampToText(&cauDbStamp, TS_TEXT_MMDDYY, cauDbStampTxt);
+    (void)epicsTimeGetCurrent(&cauDbStamp);
+    (void)epicsTimeToStrftime(cauDbStampTxt,28,"%m-%d-%y %H:%M:%S.%09f",&cauDbStamp);
     (void)printf("%s %s for %s\n", &cauDbStampTxt[12], message, name);
 }
 
@@ -300,8 +301,8 @@ int	invokeVal;
 {
     if (glCauDebug <= invokeVal)
 	return;
-    (void)tsLocalTime(&cauDbStamp);
-    (void)tsStampToText(&cauDbStamp, TS_TEXT_MMDDYY, cauDbStampTxt);
+    (void)epicsTimeGetCurrent(&cauDbStamp);
+    (void)epicsTimeToStrftime(cauDbStampTxt,28,"%m-%d-%y %H:%M:%S.%09f",&cauDbStamp);
     (void)printf("%s %s %s\n", &cauDbStampTxt[12], message, ca_message(stat));
 }
 
@@ -1151,15 +1152,15 @@ static void
 cau_interval_deadTime_test(pCauDesc)
 CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 {
-    TS_STAMP	now;
+    epicsTimeStamp	now;
     char	nowText[28];
     char	lastMonText[28];
     char	chanTsText[28];
     CAU_CHAN	*pChan;
     double	deadTime;
 
-    (void)tsLocalTime(&now);
-    (void)tsStampToText(&now, TS_TEXT_MMDDYY, nowText);
+    (void)epicsTimeGetCurrent(&now);
+    (void)epicsTimeToStrftime(nowText,28,"%m-%d-%y %H:%M:%S.%09f",&now);
     pChan = pglCauDesc->pChanHead;
     while (pChan != NULL) {
 	if (pChan->interval > 0. && pChan->lastMonErr == 0 &&
@@ -1170,12 +1171,13 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
 		(void)fprintf(pCauDesc->pCxCmd->dataOut,
 				"deadTime viol. %s at %s (local)\n",
 				pChan->name, nowText);
+
+		(void)epicsTimeToStrftime(lastMonText,28,"%m-%d-%y %H:%M:%S.%09f",
+                                                &pChan->lastMonTime);
+		(void)epicsTimeToStrftime(chanTsText,28,"%m-%d-%y %H:%M:%S.%09f",
+                                                &pChan->pBuf->tstrval.stamp);
 		(void)fprintf(pCauDesc->pCxCmd->dataOut,
-		    "last mon at %s (local) or %s (ioc)\n",
-		    tsStampToText(&pChan->lastMonTime,
-						TS_TEXT_MMDDYY, lastMonText),
-		    tsStampToText(&pChan->pBuf->tstrval.stamp,
-						TS_TEXT_MMDDYY, chanTsText));
+		    "last mon at %s (local) or %s (ioc)\n", lastMonText, chanTsText);
 		if (pCauDesc->pCxCmd->dataOut != pCauDesc->pCxCmd->dataOut) {
 		    (void)fprintf(pCauDesc->pCxCmd->dataOut,
 				"deadTime viol. %s at %s (local)\n",
@@ -1962,19 +1964,19 @@ struct event_handler_args arg;
     pCauChan = (CAU_CHAN *)arg.usr;
     pCxCmd = pCauChan->pCxCmd;
 
-    (void)tsLocalTime(&pCauChan->lastMonTime);
+    (void)epicsTimeGetCurrent(&pCauChan->lastMonTime);
     if (pCauChan->lastMonErr != 0) {
+        (void)epicsTimeToStrftime(nowText,28,"%m-%d-%y %H:%M:%S.%09f",&pCauChan->lastMonTime);
+        (void)epicsTimeToStrftime(chanTsText,28,"%m-%d-%y %H:%M:%S.%09f",
+                                                &((struct dbr_time_string *)arg.dbr)->stamp);
 	(void)fprintf(pCxCmd->dataOut,
-	    "resume for %s at %s (local) or %s (ioc)\n", pCauChan->name,
-	    tsStampToText(&pCauChan->lastMonTime, TS_TEXT_MMDDYY, nowText),
-	    tsStampToText(&((struct dbr_time_string *)arg.dbr)->stamp,
-						TS_TEXT_MMDDYY, chanTsText));
+	    "resume for %s at %s (local) or %s (ioc)\n", pCauChan->name, nowText,chanTsText);
 	if (pCxCmd->dataOut != stdout) {
+	    epicsTimeToStrftime(nowText,28,"%m-%d-%y %H:%M:%S.%09f",&pCauChan->lastMonTime);
+	    epicsTimeToStrftime(chanTsText,28,"%m-%d-%y %H:%M:%S.%09f",
+                                                &((struct dbr_time_string *)arg.dbr)->stamp);
 	    (void)fprintf(pCxCmd->dataOut,
-		"resume for %s at %s (local) or %s (ioc)\n", pCauChan->name,
-		tsStampToText(&pCauChan->lastMonTime, TS_TEXT_MMDDYY, nowText),
-		tsStampToText(&((struct dbr_time_string *)arg.dbr)->stamp,
-						TS_TEXT_MMDDYY, chanTsText));
+		"resume for %s at %s (local) or %s (ioc)\n", pCauChan->name, nowText,chanTsText);
 	}
 	pCauChan->lastMonErr = 0;
     }
@@ -1991,10 +1993,11 @@ struct event_handler_args arg;
 	if (diff < 0.)
 	    diff = -diff;
 	if (diff > pCauChan->jitter) {
+	    (void)epicsTimeToStrftime(priorStampText,28,"%m-%d-%y %H:%M:%S.%09f",
+                                &pCauChan->pBuf->tstrval.stamp);
 	    (void)fprintf(pCxCmd->dataOut,
 		    "interval from prior (at %s) to following is %.3f\n",
-		    tsStampToText(&pCauChan->pBuf->tstrval.stamp,
-				TS_TEXT_MMDDYY, priorStampText), interval);
+                    priorStampText, interval);
 	}
 	else
 	    printFlag = 0;
@@ -2039,8 +2042,8 @@ int	prEGU;		/* I 1 if EGU is to be printed */
     if (!prTime)
 	;
     else if (dbr_type_is_TIME(pChan->dbrType)) {
-	(void)tsStampToText(&pChan->pBuf->tstrval.stamp,
-						TS_TEXT_MMDDYY, stampText);
+        (void)epicsTimeToStrftime(stampText,28,"%m-%d-%y %H:%M:%S.%09f"
+                                                ,&pChan->pBuf->tstrval.stamp);
 	(void)fprintf(pCxCmd->dataOut, " %s", &stampText[9]);
     }
     else {
@@ -2208,7 +2211,7 @@ CAU_DESC	*pCauDesc;	/* IO pointer to cau descriptor */
 
     assert(pCauDesc != NULL);
 
-    (void)tsLocalTime(&now);
+    (void)epicsTimeGetCurrent(&now);
     pChan = pCauDesc->pChanHead;
     while (pChan != NULL) {
 	if (pChan->pFn != NULL) {
@@ -2532,7 +2535,7 @@ CAU_CHAN *pChan;	/* IO channel pointer */
     char	chrDiff;	/* endVal-begVal for char */
     TS_STAMP	now;		/* present time */
 
-    (void)tsLocalTime(&now);
+    (void)epicsTimeGetCurrent(&now);
     pChan->secPerStep = pCauDesc->secPerStep;
     pChan->nextTime = now;
 
