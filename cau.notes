@@ -15,3 +15,6 @@ Tue Jul  6 16:22:11 CDT 2004
 	
 Tue May 22 11:15:59 CDT 2007
 	Converted to R3.14. Makefiles.
+
+Tue Aug 14 16:37:30 CDT 2012
+	Converted from tsDefs API to epicsTime API.
