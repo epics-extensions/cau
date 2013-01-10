@@ -142,7 +142,6 @@
 #endif
 
 #include "epicsAssert.h"
-#include "tsDefs.h"
 #include "nextFieldSubrDefs.h"
 
 

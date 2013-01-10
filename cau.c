@@ -45,7 +45,6 @@
 #include "db_access.h"
 #include "nextFieldSubrDefs.h"
 #include "cvtNumbersDefs.h"
-#include "tsDefs.h"
 #include "epicsTime.h"
 
 #ifdef vxWorks
@@ -1165,7 +1164,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
     while (pChan != NULL) {
 	if (pChan->interval > 0. && pChan->lastMonErr == 0 &&
 		    			pChan->lastMonTime.secPastEpoch > 0) {
-	    TsDiffAsDouble(&deadTime, &now, &pChan->lastMonTime);
+	    deadTime = epicsTimeDiffInSeconds(&now, &pChan->lastMonTime);  /* left - right */
 	    if (deadTime > pChan->interval + 1.) {
 		pChan->lastMonErr = 1;
 		(void)fprintf(pCauDesc->pCxCmd->dataOut,
@@ -1987,8 +1986,9 @@ struct event_handler_args arg;
 	cauCaDebug(message, 1);
     }
     if (pCauChan->interval > 0. && pCauChan->pBuf->tstrval.status != -2) {
-	TsDiffAsDouble(&interval, &((struct dbr_time_string *)arg.dbr)->stamp,
-						&pCauChan->pBuf->tstrval.stamp);
+
+	interval = epicsTimeDiffInSeconds (&((struct dbr_time_string *)arg.dbr)->stamp,
+                                                &pCauChan->pBuf->tstrval.stamp);
 	diff = pCauChan->interval - interval;
 	if (diff < 0.)
 	    diff = -diff;
@@ -2215,11 +2215,11 @@ CAU_DESC	*pCauDesc;	/* IO pointer to cau descriptor */
     pChan = pCauDesc->pChanHead;
     while (pChan != NULL) {
 	if (pChan->pFn != NULL) {
-	    if (TsCmpStampsGE(&now, &pChan->nextTime)) {
+	    if ( epicsTimeGreaterThanEqual(&now, &pChan->nextTime)) {  /*true if left >= right */
+
 		(pChan->pFn)(pCxCmd, pChan);
 		count += cauSigGenPut(pCxCmd, pChan);
-		TsAddDouble(&pChan->nextTime, &pChan->nextTime,
-							    pChan->secPerStep);
+		epicsTimeAddSeconds(&pChan->nextTime, pChan->secPerStep);
 	    }
 	}
 	pChan = pChan->pNext;

@@ -12,8 +12,7 @@
 TOP = ../..
 include $(TOP)/configure/CONFIG
 
-USR_LIBS = ts ca Com
-ts_DIR=$(INSTALL_LIB)
+USR_LIBS = ca Com
 
 PROD_HOST = cau
 
