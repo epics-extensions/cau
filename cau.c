@@ -779,13 +779,7 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
     CX_CMD	*pCxCmd;	/* local copy of pointer, for convenience */
 
     pCxCmd = *ppCxCmd;
-    if (strcmp(pCxCmd->pCommand,			"assert0") == 0) {
-/*-----------------------------------------------------------------------------
-*	under SunOS, this generates SIGABRT; for VxWorks, SIGUSR1
-*----------------------------------------------------------------------------*/
-	assertAlways(0);
-    }
-    else if (strcmp(pCxCmd->pCommand,			"quit") == 0) {
+    if (strcmp(pCxCmd->pCommand,			"quit") == 0) {
 	/* insert wrapup processing here */
 	pCauDesc->cauTaskInfo.stop = 1;
     }
@@ -793,11 +787,6 @@ CAU_DESC *pCauDesc;	/* IO pointer to cau descriptor */
     else if (strcmp(pCxCmd->pCommand,			"showStack") == 0)
 	pCauDesc->showStack = 1;
 #endif
-    else if (strcmp(pCxCmd->pCommand,			"trap") == 0) {
-	int	*j;
-	j = (int *)(-1);
-	j = (int *)(*j);
-    }
     else if (strcmp(pCxCmd->pCommand,			"deadband") == 0)
 	cau_deadband(pCxCmd);
     else if (strcmp(pCxCmd->pCommand,			"debug") == 0)
